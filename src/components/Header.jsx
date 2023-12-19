@@ -13,9 +13,11 @@ const Header = () => {
     <div className="bg-white shadow-sm hover:shadow-md transition-all sticky top-0   ">
       <header className="flex max-w-6xl mx-auto justify-between px-6  items-center">
         <div className="logo cursor-pointer">
-          <h1 className="text-2xl tracking-wide font-semibold ">
-            easy <span className="text-red-700">home</span>
-          </h1>
+          <Link to='/' >
+            <h1 className="text-2xl tracking-wide font-semibold ">
+              easy <span className="text-red-700">home</span>
+            </h1>
+          </Link>
         </div>
         <div className="flex space-x-10 font-semibold text-gray-500 tracking-wide ">
           <Link to="/">
@@ -38,7 +40,7 @@ const Header = () => {
             </p>
           </Link>
 
-          <Link to='/signin' >
+          <Link to="/signin">
             <p
               className={` py-3 ${
                 getPathName("/signin") && "border-b-2 border-red-600"
