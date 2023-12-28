@@ -1,9 +1,19 @@
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+
 import Lock from "../assets/lock.jpg";
+import GoogleBtn from "../components/GoogleBtn";
 
 import { FaEyeSlash, FaRegEye } from "react-icons/fa";
-import GoogleBtn from "../components/GoogleBtn";
-import { Link } from "react-router-dom";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
+import { db } from "../firebase";
+import { doc, serverTimestamp, setDoc } from "firebase/firestore";
+import { toast } from "react-toastify";
+
 
 const Signup = () => {
   const [email, setEmail] = useState("");
@@ -11,6 +21,32 @@ const Signup = () => {
   const [name, setName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
+  const navigate = useNavigate();
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    try {
+      const auth = getAuth();
+      const userCredentials = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      updateProfile(auth.currentUser, {
+        displayName: name,
+      });
+      const user = userCredentials.user;
+
+      await setDoc(doc(db, "users", user.uid), {
+        name,
+        email,
+        timeStmp: serverTimestamp(),
+      });
+      navigate('/')
+    } catch (error) {
+      toast.error("Something went fishy ")
+    }
+  }
   return (
     <div className="max-w-6xl mx-auto px-6">
       <h1 className="text-3xl font-bold tracking-wide text-center  my-6">
@@ -20,7 +56,10 @@ const Signup = () => {
         <div className="w-full md:w-[80%] mx-auto lg:w-[50%]">
           <img className="rounded w-full" src={Lock} alt="sign-in" />
         </div>
-        <form className="w-full mx-auto  md:w-[80%]  lg:w-[40%] my-8">
+        <form
+          onSubmit={handleSubmit}
+          className="w-full mx-auto  md:w-[80%]  lg:w-[40%] my-8"
+        >
           <input
             className=" text-2xl capitalize  w-full py-2 px-4 rounded border-gray-500 border my-4  "
             placeholder="full name"
@@ -64,7 +103,7 @@ const Signup = () => {
                 </span>
               </Link>
             </p>
-            <Link to='/forgot-password' >
+            <Link to="/forgot-password">
               <p className="text-blue-700 font-semibold cursor-pointer mx-1">
                 forgot password?
               </p>
