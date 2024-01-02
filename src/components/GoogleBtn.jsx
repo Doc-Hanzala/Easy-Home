@@ -3,8 +3,11 @@ import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
 import { FcGoogle } from "react-icons/fc";
 import { db } from "../firebase";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const GoogleBtn = () => {
+  const navigate = useNavigate();
+
   const onClick = async () => {
     try {
       const provider = new GoogleAuthProvider();
@@ -23,6 +26,7 @@ const GoogleBtn = () => {
           timeStamp: serverTimestamp(),
         });
       }
+      navigate("/");
     } catch (error) {
       toast.error("Something went fishy with google authentication");
     }
