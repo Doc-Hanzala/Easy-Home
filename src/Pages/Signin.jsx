@@ -3,12 +3,35 @@ import Lock from "../assets/lock.jpg";
 
 import { FaEyeSlash, FaRegEye } from "react-icons/fa";
 import GoogleBtn from "../components/GoogleBtn";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { toast } from "react-toastify";
 
 const Signin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const auth = getAuth();
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+      if (userCredential.user) {
+        navigate("/");
+      }
+    } catch (error) {
+      toast.error("wrong user credentials");
+    }
+  };
 
   return (
     <div className="max-w-6xl mx-auto px-6">
@@ -19,7 +42,10 @@ const Signin = () => {
         <div className="w-full md:w-[80%] mx-auto lg:w-[50%]">
           <img className="rounded w-full" src={Lock} alt="sign-in" />
         </div>
-        <form className="w-full mx-auto  md:w-[80%]  lg:w-[40%] my-8">
+        <form
+          onSubmit={handleSubmit}
+          className="w-full mx-auto  md:w-[80%]  lg:w-[40%] my-8"
+        >
           <input
             className=" text-2xl capitalize  w-full py-2 px-4 rounded border-gray-500 border my-4  "
             placeholder="email address"
@@ -81,4 +107,3 @@ const Signin = () => {
 };
 
 export default Signin;
- 
